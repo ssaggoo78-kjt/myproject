@@ -1,15 +1,23 @@
+# Java 17과 Gradle이 모두 포함된 공식 이미지 사용
+FROM gradle:8.7.0-jdk21
 
-# Use an official OpenJDK runtime as a parent image
-FROM openjdk:17-jdk-slim
+# 작업 디렉토리 설정
+WORKDIR /home/gradle/src
 
-# Set the working directory in the container
-WORKDIR /app
+# 현재 폴더의 모든 소스 코드를 이미지 안으로 복사
+COPY . .
 
-# Copy the fat jar into the container at /app
-COPY app/build/libs/app.jar /app/app.jar
+# Gradle을 사용하여 백엔드 애플리케이션을 빌드
+# 이렇게 하면 app/build.gradle 파일을 찾아 app-0.0.1-SNAPSHOT.jar 파일을 생성합니다.
+RUN gradle build --no-daemon
 
-# Make port 8080 available to the world outside this container
+# --- 디버깅 단계 ---
+# 빌드 완료 후, app/build/libs 폴더에 어떤 파일이 생성되었는지 확인합니다.
+RUN echo "========== JAR 파일 목록 확인 ==========" && ls -lR app/build/libs
+RUN echo "======================================"
+
+# 애플리케이션 포트 노출
 EXPOSE 8080
 
-# Run the jar file 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# 컨테이너가 시작될 때 빌드된 JAR 파일을 실행
+CMD ["java", "-jar", "app/build/libs/app.jar"]
