@@ -1,0 +1,20 @@
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Build output
+build/
+.gradle/
+
+# Sensitive configuration
+app/src/main/resources/application.yml
+
+# Other
+*.class
+*.log
+*.jar
+*.war
+*.ear
+demo.zip
